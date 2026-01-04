@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Focus | Bio-Dome Fixed</title>
+    <style>
+        /* RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Roboto, monospace;
+            background-color: #0f1215;
+            color: white;
+            overflow-y: auto;
+        }
+
+        /* DYNAMIC BACKGROUND */
+        .bg-image {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2000&auto=format&fit=crop') center/cover;
+            filter: brightness(0.4);
+            z-index: -1;
+        }
+
+        /* MAIN LAYOUT */
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            gap: 40px;
+        }
+
+        /* --- POMODORO TIMER STYLES --- */
+        .timer-card {
+            background: rgba(10, 15, 12, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            padding: 20px 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .timer-display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            margin: 10px 0;
+            line-height: 1;
+        }
+
+        .timer-label {
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        /* Timer Settings */
+        .timer-settings {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .setting-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .setting-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #666;
+        }
+
+        .timer-input {
+            width: 70px;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #00ff88;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .timer-input:focus {
+            outline: none;
+            border-color: rgba(0, 255, 136, 0.4);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .timer-input::placeholder {
+            color: #555;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #ccc;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .btn:hover { background: rgba(255,255,255,0.15); color: white; }
+        
+        .btn-primary { 
+            background: rgba(0, 255, 136, 0.15); 
+            border-color: rgba(0, 255, 136, 0.4); 
+            color: #00ff88;
+        }
+        .btn-primary:hover { 
+            background: #00ff88; 
+            color: #000; 
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        /* --- SOUND GRID STYLES --- */
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .sound-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            height: 180px;
+        }
+
+        .sound-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Active State */
+        .sound-card.active {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.08);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+            transition: 0.3s;
+            filter: grayscale(100%);
+        }
+
+        .sound-card.active .icon {
+            opacity: 1;
+            transform: scale(1.1);
+            filter: grayscale(0%);
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+        }
+
+        /* Play Status Indicator */
+        .status-text {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            color: #666;
+            font-weight: bold;
+        }
+        .sound-card.active .status-text { color: #00ff88; }
+
+        /* Volume Slider */
+        .slider-wrapper {
+            width: 100%;
+            opacity: 0.3;
+            transition: 0.3s;
+            pointer-events: none; /* Disable slider when off */
+        }
+        
+        .sound-card.active .slider-wrapper {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        input[type=range] {
+            width: 100%;
+            -webkit-appearance: none;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+
+        /* --- STOP ALL BUTTON --- */
+        .stop-all-btn {
+            background: transparent;
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.75rem;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .stop-all-btn:hover {
+            background: #ff4444;
+            color: white;
+            box-shadow: 0 0 25px rgba(255, 68, 68, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .sound-grid { grid-template-columns: 1fr; }
+            .timer-display { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-image"></div>
+
+    <div class="container">
+        
+        <div class="timer-card">
+            <div class="timer-label" id="timer-mode">System Focus</div>
+            <div class="timer-display" id="time-display">25:00</div>
+            
+            <!-- Timer Duration Settings -->
+            <div class="timer-settings">
+                <div class="setting-group">
+                    <label class="setting-label">Work (min)</label>
+                    <input type="number" 
+                           class="timer-input" 
+                           id="work-duration" 
+                           min="5" 
+                           max="60" 
+                           value="25"
+                           onchange="updateWorkDuration(this.value)">
+                </div>
+                <div class="setting-group">
+                    <label class="setting-label">Break (min)</label>
+                    <input type="number" 
+                           class="timer-input" 
+                           id="break-duration" 
+                           min="5" 
+                           max="60" 
+                           value="5"
+                           onchange="updateBreakDuration(this.value)">
+                </div>
+            </div>
+
+            <div class="timer-controls">
+                <button class="btn btn-primary" id="start-btn" onclick="toggleTimer()">Start</button>
+                <button class="btn" onclick="resetTimer()">Reset</button>
+                <button class="btn" id="mode-btn" onclick="switchMode()">Break</button>
+            </div>
+        </div>
+
+        <div class="sound-grid">
+            
+            <div class="sound-card" id="card-forest" onclick="toggleSound('forest', 'card-forest')">
+                <div class="icon">🌲</div>
+                <div class="status-text" id="status-forest">OFF</div>
+                <div class="slider-wrapper" onclick="event.stopPropagation()">
+                    <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="setVolume('forest', this.value)">
+                </div>
+                <audio id="forest" loop preload="auto" src="sounds/forest_sounds.mp3"></audio>
+            </div>
+
+            <div class="sound-card" id="card-rain" onclick="toggleSound('rain', 'card-rain')">
+                <div class="icon">🌧️</div>
+                <div class="status-text" id="status-rain">OFF</div>
+                <div class="slider-wrapper" onclick="event.stopPropagation()">
+                    <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="setVolume('rain', this.value)">
+                </div>
+                <audio id="rain" loop preload="auto" src="sounds/rain_sounds.mp3"></audio>
+            </div>
+
+            <div class="sound-card" id="card-birds" onclick="toggleSound('birds', 'card-birds')">
+                <div class="icon">🦜</div>
+                <div class="status-text" id="status-birds">OFF</div>
+                <div class="slider-wrapper" onclick="event.stopPropagation()">
+                    <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="setVolume('birds', this.value)">
+                </div>
+                <audio id="birds" loop preload="auto" src="sounds/bird_sounds.mp3"></audio>
+            </div>
+
+            <div class="sound-card" id="card-water" onclick="toggleSound('water', 'card-water')">
+                <div class="icon">🌊</div>
+                <div class="status-text" id="status-water">OFF</div>
+                <div class="slider-wrapper" onclick="event.stopPropagation()">
+                    <input type="range" min="0" max="1" step="0.01" value="0.5" oninput="setVolume('water', this.value)">
+                </div>
+                <audio id="water" loop preload="auto" src="sounds/wave_sounds.mp3"></audio>
+            </div>
+
+        </div>
+
+        <button class="stop-all-btn" onclick="stopAllSounds()">Shutdown Audio</button>
+
+    </div>
+
+    <script>
+        // --- ROBUST AUDIO LOGIC ---
+        
+        function toggleSound(audioId, cardId) {
+            const audio = document.getElementById(audioId);
+            const card = document.getElementById(cardId);
+            const statusText = card.querySelector('.status-text');
+
+            // Safety check
+            if (!audio) {
+                console.error("Audio not found:", audioId);
+                return;
+            }
+
+            // Check if currently active (playing or attempting to play)
+            const isActive = card.classList.contains('active');
+
+            if (isActive) {
+                // Turn OFF
+                audio.pause();
+                audio.currentTime = 0;
+                card.classList.remove('active');
+                statusText.innerText = "OFF";
+                audio.dataset.fading = "false";
+            } else {
+                // Turn ON - Try to play
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(_ => {
+                        // Play started successfully
+                        card.classList.add('active');
+                        statusText.innerText = "ACTIVE";
+                        audio.dataset.fading = "false";
+                        // Ensure volume is restored
+                        const slider = card.querySelector('input[type=range]');
+                        audio.volume = slider.value;
+                    })
+                    .catch(error => {
+                        console.error("Playback failed:", error);
+                        statusText.innerText = "ERROR";
+                        // Don't add active class if play failed
+                        card.classList.remove('active');
+                    });
+                }
+            }
+        }
+
+        function setVolume(audioId, volValue) {
+            const audio = document.getElementById(audioId);
+            // Only update volume if we are NOT currently auto-fading out
+            if (audio.dataset.fading !== "true") {
+                audio.volume = volValue;
+            }
+        }
+
+        function stopAllSounds() {
+            const sounds = ['forest', 'rain', 'birds', 'water'];
+            sounds.forEach(id => {
+                const audio = document.getElementById(id);
+                const card = document.getElementById('card-' + id);
+                const status = card.querySelector('.status-text');
+                
+                audio.pause();
+                audio.currentTime = 0;
+                card.classList.remove('active');
+                status.innerText = "OFF";
+                audio.dataset.fading = "false";
+            });
+        }
+
+        function fadeOutAndStop() {
+            const activeAudios = [];
+            const audios = document.querySelectorAll('audio');
+
+            // Find what is playing
+            audios.forEach(a => {
+                if (!a.paused) {
+                    a.dataset.fading = "true"; // Lock volume slider
+                    activeAudios.push(a);
+                }
+            });
+
+            if (activeAudios.length === 0) return;
+
+            // Fade logic
+            let fadeInterval = setInterval(() => {
+                let stillFading = false;
+                activeAudios.forEach(a => {
+                    if (a.volume > 0.05) {
+                        a.volume -= 0.05;
+                        stillFading = true;
+                    } else {
+                        a.volume = 0;
+                    }
+                });
+
+                if (!stillFading) {
+                    clearInterval(fadeInterval);
+                    activeAudios.forEach(a => {
+                        a.pause();
+                        a.dataset.fading = "false"; // Unlock
+                        
+                        // Restore volume UI match
+                        const cardId = 'card-' + a.id;
+                        const card = document.getElementById(cardId);
+                        const slider = card.querySelector('input');
+                        a.volume = slider.value; // Reset internal volume for next play
+                        
+                        // Update UI
+                        card.classList.remove('active');
+                        card.querySelector('.status-text').innerText = "OFF";
+                    });
+                }
+            }, 100); // Drop volume every 100ms
+        }
+
+
+        // --- TIMER LOGIC ---
+        let timer;
+        let isRunning = false;
+        let timeLeft = 25 * 60;
+        let isBreak = false;
+        let workDuration = 25; // in minutes
+        let breakDuration = 5; // in minutes
+
+        const timeDisplay = document.getElementById('time-display');
+        const startBtn = document.getElementById('start-btn');
+        const modeLabel = document.getElementById('timer-mode');
+        const modeBtn = document.getElementById('mode-btn');
+
+        function updateDisplay() {
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            timeDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function updateWorkDuration(value) {
+            // Validate input (5-60 minutes)
+            let duration = parseInt(value);
+            if (isNaN(duration) || duration < 5) {
+                duration = 5;
+                document.getElementById('work-duration').value = 5;
+            } else if (duration > 60) {
+                duration = 60;
+                document.getElementById('work-duration').value = 60;
+            }
+            
+            workDuration = duration;
+            
+            // If currently in work mode and not running, update the timer
+            if (!isBreak && !isRunning) {
+                timeLeft = workDuration * 60;
+                updateDisplay();
+            }
+        }
+
+        function updateBreakDuration(value) {
+            // Validate input (5-60 minutes)
+            let duration = parseInt(value);
+            if (isNaN(duration) || duration < 5) {
+                duration = 5;
+                document.getElementById('break-duration').value = 5;
+            } else if (duration > 60) {
+                duration = 60;
+                document.getElementById('break-duration').value = 60;
+            }
+            
+            breakDuration = duration;
+            
+            // If currently in break mode and not running, update the timer
+            if (isBreak && !isRunning) {
+                timeLeft = breakDuration * 60;
+                updateDisplay();
+            }
+        }
+
+        function toggleTimer() {
+            if (isRunning) {
+                clearInterval(timer);
+                startBtn.textContent = "Start";
+                startBtn.classList.remove('btn-primary'); // Remove glow
+            } else {
+                timer = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        // DONE
+                        clearInterval(timer);
+                        isRunning = false;
+                        startBtn.textContent = "Start";
+                        startBtn.classList.remove('btn-primary');
+                        // Trigger soft fade
+                        fadeOutAndStop();
+                    }
+                }, 1000);
+                startBtn.textContent = "Pause";
+                startBtn.classList.add('btn-primary'); // Add glow
+            }
+            isRunning = !isRunning;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            startBtn.textContent = "Start";
+            startBtn.classList.remove('btn-primary');
+            timeLeft = isBreak ? breakDuration * 60 : workDuration * 60;
+            updateDisplay();
+        }
+
+        function switchMode() {
+            isBreak = !isBreak;
+            resetTimer();
+            if (isBreak) {
+                timeLeft = breakDuration * 60;
+                modeLabel.textContent = "System Cool-down";
+                modeLabel.style.color = "#00bcd4";
+                modeBtn.textContent = "Work";
+            } else {
+                timeLeft = workDuration * 60;
+                modeLabel.textContent = "System Focus";
+                modeLabel.style.color = "#888";
+                modeBtn.textContent = "Break";
+            }
+            updateDisplay();
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
