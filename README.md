@@ -97,7 +97,7 @@ This project is open source and available under the [MIT License](https://openso
 - Inspired by [Noisli](https://www.noisli.com/)
 - Background image from [Unsplash](https://unsplash.com/)
 - Break game mechanics inspired by classic Space Invaders
-- Sound files sourced from [specify your source if you want]
+- Sound files sourced from Youtube public domain
 
 ## 🐛 Known Issues
 
