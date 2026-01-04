@@ -22,7 +22,7 @@ A minimalist Pomodoro timer with ambient nature sounds to help you focus and rel
 ```bash
    cd Noisli-Clone
 ```
-3. Open `index.html` in your web browser
+3. Open `noisli.html` in your web browser
 
 That's it! No build process or dependencies needed.
 
@@ -57,7 +57,7 @@ Mix multiple sounds together to create your perfect productivity atmosphere!
 ## 🛠️ Customization
 
 You can easily customize:
-- Background image (line 18 in `index.html`)
+- Background image (line 18 in `noisli.html`)
 - Color scheme (CSS variables in the `<style>` section)
 - Sound files (replace MP3s in the `sounds/` folder)
 - Timer constraints (change min/max values in the input fields)
