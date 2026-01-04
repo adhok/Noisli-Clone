@@ -29,7 +29,7 @@ That's it! No build process or dependencies needed.
 ### File Structure
 ```
 Noisli-Clone/
-├── index.html          # Main application file
+├── noisli.html          # Main application file
 └── sounds/            # Audio files
     ├── bird_sounds.mp3
     ├── forest_sounds.mp3
