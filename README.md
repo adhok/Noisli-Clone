@@ -1,6 +1,6 @@
 # Eco-Focus 🌲
 
-A minimalist Pomodoro timer with ambient nature sounds to help you focus and relax. Inspired by Noisli, this web app combines productivity tracking with customizable soundscapes.
+A minimalist Pomodoro timer with ambient nature sounds to help you focus and relax. Inspired by Noisli, this web app combines productivity tracking with customizable soundscapes and a fun break-time reward game!
 
 ## ✨ Features
 
@@ -8,6 +8,9 @@ A minimalist Pomodoro timer with ambient nature sounds to help you focus and rel
 - **Ambient Soundscapes**: Mix and match forest, rain, birds, and ocean waves
 - **Volume Control**: Individual volume sliders for each sound
 - **Auto Fade-Out**: Sounds gradually fade when timer completes
+- **Break Game**: Unlock a Space Invaders-style game during break time! 👾
+- **Persistent Settings**: Your timer preferences are saved automatically
+- **Tab Timer Display**: See countdown in browser tab when timer is running
 - **Responsive Design**: Works on desktop and mobile browsers
 - **No Installation Required**: Pure HTML/CSS/JavaScript - just open and use
 
@@ -29,7 +32,7 @@ That's it! No build process or dependencies needed.
 ### File Structure
 ```
 Noisli-Clone/
-├── noisli.html          # Main application file
+├── noisli.html         # Main application file
 └── sounds/            # Audio files
     ├── bird_sounds.mp3
     ├── forest_sounds.mp3
@@ -39,11 +42,26 @@ Noisli-Clone/
 
 ## 🎯 How to Use
 
-1. **Set Your Timer**: Adjust work and break durations (5-60 minutes)
+### Focus Timer
+1. **Set Your Timer**: Adjust work and break durations (Work: 5-60 minutes, Break: 1-60 minutes)
 2. **Choose Your Sounds**: Click on any sound card to toggle it on/off
 3. **Adjust Volume**: Use the sliders when a sound is active
 4. **Start Focus Session**: Click "Start" to begin your Pomodoro session
 5. **Switch Modes**: Toggle between Work and Break modes as needed
+
+### Break Game 🎮
+When you enter **Break Mode**, the game becomes unlocked!
+
+**How to Play:**
+- **Move**: Use Arrow Keys (← →) to move your ship
+- **Shoot**: Press SPACEBAR to fire bullets
+- **Objective**: Destroy all enemy ships before they reach you!
+
+**Game Features:**
+- Enemies move in formation with wave patterns
+- Watch out for **diving enemies** (purple) that chase you!
+- Difficulty increases as your score goes up
+- Game automatically locks when you return to work mode
 
 ## 🎨 Sound Profiles
 
@@ -61,6 +79,14 @@ You can easily customize:
 - Color scheme (CSS variables in the `<style>` section)
 - Sound files (replace MP3s in the `sounds/` folder)
 - Timer constraints (change min/max values in the input fields)
+- Game difficulty (adjust `baseSpeed` and enemy spawn rates in the JavaScript)
+
+## 💡 Tips for Best Results
+
+- Use the **Work/Break cycle** to maintain focus and avoid burnout
+- Experiment with **sound combinations** to find what helps you concentrate
+- The **break game** is designed to be a quick mental reset - don't skip your breaks!
+- Your timer settings are **saved automatically** and will persist between sessions
 
 ## 📝 License
 
@@ -70,17 +96,25 @@ This project is open source and available under the [MIT License](https://openso
 
 - Inspired by [Noisli](https://www.noisli.com/)
 - Background image from [Unsplash](https://unsplash.com/)
-- Sound files sourced from Youtube Non Copyright sources
+- Break game mechanics inspired by classic Space Invaders
+- Sound files sourced from [specify your source if you want]
 
 ## 🐛 Known Issues
 
 - Audio may not autoplay on some mobile browsers due to browser autoplay policies
 - First click interaction may be required to enable audio playback
+- Game controls work best on desktop/laptop keyboards
 
 ## 🤝 Contributing
 
 Feel free to fork this project and submit pull requests for any improvements!
 
+**Ideas for future enhancements:**
+- Additional game levels or game modes
+- More ambient sound options
+- Statistics tracking (total focus time, completed sessions)
+- Mobile-friendly game controls
+
 ---
 
-Made with 🎧 for focused productivity
+Made with 🎧 for focused productivity and 👾 for guilt-free breaks
