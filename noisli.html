@@ -495,6 +495,23 @@
                 document.getElementById('break-duration').value = savedBreak;
                 updateBreakDuration(savedBreak);
             }
+
+            // --- PREVENT ACCIDENTAL PAUSE (Earbuds/Media Keys) ---
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.setActionHandler('play', function () { });
+                navigator.mediaSession.setActionHandler('pause', function () {
+                    console.log('External pause intercepted.');
+                });
+                navigator.mediaSession.setActionHandler('stop', function () { });
+                navigator.mediaSession.setActionHandler('previoustrack', function () { });
+                navigator.mediaSession.setActionHandler('nexttrack', function () { });
+            }
+
+            window.addEventListener('keydown', function (e) {
+                if (e.key === 'MediaPlayPause' || e.key === 'MediaStop') {
+                    e.preventDefault();
+                }
+            });
         }
 
         // --- 2. AUDIO LOGIC ---
