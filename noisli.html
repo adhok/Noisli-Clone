@@ -394,6 +394,9 @@
         <div class="timer-info">
             <div class="app-title">ECO-FOCUS | BIO-DOME</div>
             <div class="timer-label" id="timer-mode">System Focus</div>
+            <div class="session-count" id="session-count-display"
+                style="font-size: 0.7rem; color: #00bcd4; margin-top: 5px; font-weight: bold; letter-spacing: 1px;">
+                TOTAL SESSIONS: 0</div>
         </div>
 
         <div class="timer-display" id="time-display">25:00</div>
@@ -475,7 +478,12 @@
         <div class="game-container" id="view-game">
             <canvas id="gameCanvas" width="600" height="400"></canvas>
             <div class="game-overlay" id="game-start-msg">Press SPACE to Start</div>
-            <div class="game-score">Score: <span id="score-display">0</span></div>
+            <div class="game-score">
+                Score: <span id="score-display">0</span>
+                <span id="high-score-wrapper" style="margin-left: 20px; font-size: 0.8em; color: #fff;">High Score:
+                    <span id="high-score-display">0</span></span>
+                <div id="wave-display" style="font-size: 0.8em; color: #ff00ff; margin-top:5px;">WAVE 1</div>
+            </div>
         </div>
 
         <button class="stop-all-btn" onclick="stopAllSounds()">Shutdown Audio</button>
@@ -495,6 +503,14 @@
                 document.getElementById('break-duration').value = savedBreak;
                 updateBreakDuration(savedBreak);
             }
+            if (localStorage.getItem('totalSessions')) {
+                totalSessions = parseInt(localStorage.getItem('totalSessions'));
+                updateSessionDisplay();
+            }
+            if (localStorage.getItem('gameHighScore')) {
+                gameHighScore = parseInt(localStorage.getItem('gameHighScore'));
+                document.getElementById('high-score-display').innerText = gameHighScore;
+            }
 
             // --- PREVENT ACCIDENTAL PAUSE (Earbuds/Media Keys) ---
             if ('mediaSession' in navigator) {
@@ -512,6 +528,11 @@
                     e.preventDefault();
                 }
             });
+
+            // Request Notification Permission
+            if ("Notification" in window && Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
         }
 
         // --- 2. AUDIO LOGIC ---
@@ -611,11 +632,18 @@
         let workDuration = 25;
         let breakDuration = 5;
         let gameEnabled = false;
+        let totalSessions = 0;
 
         const timeDisplay = document.getElementById('time-display');
         const startBtn = document.getElementById('start-btn');
         const modeLabel = document.getElementById('timer-mode');
         const modeBtn = document.getElementById('mode-btn');
+
+        function showNotification(title, body) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(title, { body: body });
+            }
+        }
 
         function updateDisplay() {
             const m = Math.floor(timeLeft / 60);
@@ -663,6 +691,18 @@
                         startBtn.textContent = "Start";
                         startBtn.classList.remove('btn-primary');
                         fadeOutAndStop();
+                        startBtn.classList.remove('btn-primary');
+                        fadeOutAndStop();
+                        if (!isBreak) {
+                            // Work session finished
+                            totalSessions++;
+                            localStorage.setItem('totalSessions', totalSessions);
+                            updateSessionDisplay();
+                            showNotification("Focus Session Complete", "Great job! Take a break.");
+                        } else {
+                            // Break finished
+                            showNotification("Break Over!", "Time to get back to work.");
+                        }
                         if (isBreak) switchMode();
                     }
                 }, 1000);
@@ -671,6 +711,10 @@
             }
             isRunning = !isRunning;
             updateDisplay();
+        }
+
+        function updateSessionDisplay() {
+            document.getElementById('session-count-display').innerText = "TOTAL SESSIONS: " + totalSessions;
         }
 
         function resetTimer() {
@@ -740,6 +784,8 @@
         let keys = {};
         let gameRunning = false;
         let baseSpeed = 2;
+        let gameLevel = 1;
+        let gameHighScore = 0;
 
         window.addEventListener('keydown', e => {
             keys[e.code] = true;
@@ -755,30 +801,79 @@
             score = 0;
             frameCount = 0;
             baseSpeed = 2;
+            gameLevel = 1;
+
             document.getElementById('score-display').innerText = score;
+            document.getElementById('wave-display').innerText = "WAVE " + gameLevel;
             document.getElementById('game-start-msg').style.display = "block";
             document.getElementById('game-start-msg').innerText = "Press SPACE to Start";
 
-            enemies = [];
-            for (let r = 0; r < 4; r++) {
-                for (let c = 0; c < 8; c++) {
-                    enemies.push({
-                        x: 50 + c * 60,
-                        y: 30 + r * 40,
-                        w: 30, h: 20,
-                        alive: true,
-                        mode: 'formation',
-                        formationX: 50 + c * 60,
-                        formationY: 30 + r * 40
-                    });
-                }
-            }
+            spawnWave(1);
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             draw();
         }
 
+        function spawnWave(level) {
+            enemies = [];
+            const pattern = (level - 1) % 4;
+
+            // Speed increases with level
+            baseSpeed = 2 + (level * 0.5);
+
+            if (pattern === 0) {
+                // Classic Grid
+                for (let r = 0; r < 4; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        createEnemy(50 + c * 60, 30 + r * 40);
+                    }
+                }
+            } else if (pattern === 1) {
+                // The Wedge (V-shape)
+                for (let r = 0; r < 5; r++) {
+                    for (let c = 0; c < 9; c++) {
+                        if (Math.abs(c - 4) <= r) {
+                            createEnemy(50 + c * 55, 30 + r * 40);
+                        }
+                    }
+                }
+            } else if (pattern === 2) {
+                // Split Columns
+                for (let c = 0; c < 3; c++) {
+                    // Left group
+                    for (let r = 0; r < 6; r++) createEnemy(40 + c * 50, 30 + r * 40);
+                    // Right group
+                    for (let r = 0; r < 6; r++) createEnemy(400 + c * 50, 30 + r * 40);
+                }
+            } else {
+                // Checkerboard
+                for (let r = 0; r < 6; r++) {
+                    for (let c = 0; c < 10; c++) {
+                        if ((r + c) % 2 === 0) {
+                            createEnemy(30 + c * 50, 30 + r * 35);
+                        }
+                    }
+                }
+            }
+        }
+
+        function createEnemy(x, y) {
+            enemies.push({
+                x: x, y: y, w: 30, h: 20,
+                alive: true,
+                mode: 'formation',
+                formationX: x, formationY: y
+            });
+        }
+
         function startGameLoop() {
             if (!gameEnabled) return;
+
+            // Auto-start timer if not running
+            if (!isRunning) {
+                toggleTimer();
+            }
+
             gameRunning = true;
             document.getElementById('game-start-msg').style.display = "none";
             loop();
@@ -850,9 +945,27 @@
                         bullets.splice(bi, 1);
                         score += 10;
                         document.getElementById('score-display').innerText = score;
+
+                        // High Score Check
+                        if (score > gameHighScore) {
+                            gameHighScore = score;
+                            localStorage.setItem('gameHighScore', gameHighScore);
+                            document.getElementById('high-score-display').innerText = gameHighScore;
+                        }
                     }
                 });
             });
+
+            // Level Clear Check
+            if (enemies.every(e => !e.alive)) {
+                gameLevel++;
+                document.getElementById('wave-display').innerText = "WAVE " + gameLevel;
+                // Brief pause before spawn could be added here, currently instant
+                spawnWave(gameLevel);
+                // Bonus for clearing wave?
+                score += 50;
+                document.getElementById('score-display').innerText = score;
+            }
         }
 
         function draw() {
