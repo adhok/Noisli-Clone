@@ -374,6 +374,48 @@
             box-shadow: 0 0 25px rgba(255, 68, 68, 0.4);
         }
 
+        /* --- DATE TIME DISPLAY --- */
+        .datetime-display {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            text-align: right;
+            font-family: 'Courier New', Courier, monospace;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.05);
+            /* Transparent like sound cards */
+            padding: 15px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .dt-time {
+            font-size: 1.5rem;
+            color: #00ff88;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+            line-height: 1;
+        }
+
+        .dt-location {
+            font-size: 0.9rem;
+            color: #00bcd4;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 188, 212, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .dt-date {
+            font-size: 0.8rem;
+            color: #ccc;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         @media (max-width: 600px) {
             .sound-grid {
                 grid-template-columns: 1fr;
@@ -488,6 +530,13 @@
 
         <button class="stop-all-btn" onclick="stopAllSounds()">Shutdown Audio</button>
 
+    </div>
+
+    <!-- Date Time Display -->
+    <div class="datetime-display" id="datetime-container">
+        <div class="dt-location" id="dt-location">Locating...</div>
+        <div class="dt-time" id="dt-time">00:00:00</div>
+        <div class="dt-date" id="dt-date">Loading...</div>
     </div>
 
     <script>
@@ -1006,6 +1055,40 @@
             draw();
             gameLoopId = requestAnimationFrame(loop);
         }
+
+        // --- 5. DATE TIME WIDGET ---
+        function updateDateTimeWidget() {
+            const now = new Date();
+
+            // Time
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('dt-time').innerText = timeStr;
+
+            // Date
+            const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('en-US', options);
+            document.getElementById('dt-date').innerText = dateStr;
+        }
+
+        // Init and Interval
+        updateDateTimeWidget();
+        setInterval(updateDateTimeWidget, 1000);
+
+        // Location Fetch
+        function fetchLocation() {
+            fetch('https://get.geojs.io/v1/ip/geo.json')
+                .then(response => response.json())
+                .then(data => {
+                    const city = data.city;
+                    const country = data.country; // or country_code
+                    document.getElementById('dt-location').innerText = `${city}, ${country}`;
+                })
+                .catch(err => {
+                    console.error("Location fetch failed", err);
+                    document.getElementById('dt-location').innerText = "WORLDWIDE";
+                });
+        }
+        fetchLocation();
 
         updateDisplay();
     </script>
