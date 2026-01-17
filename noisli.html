@@ -416,13 +416,127 @@
             letter-spacing: 1px;
         }
 
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 900px) {
+            .timer-bar {
+                flex-direction: column;
+                height: auto;
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .timer-display {
+                position: static;
+                transform: none;
+                margin: 10px 0;
+            }
+        }
+
         @media (max-width: 600px) {
             .sound-grid {
                 grid-template-columns: 1fr;
             }
 
             .timer-display {
-                font-size: 3.5rem;
+                font-size: 2.5rem;
+            }
+
+            .timer-controls-group {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .timer-settings {
+                justify-content: center;
+            }
+
+            .container {
+                padding-top: 240px;
+                /* Push content down below taller header */
+            }
+
+            .datetime-display {
+                bottom: 10px;
+                right: 10px;
+                padding: 10px;
+                left: 10px;
+                /* Make it full width capability if needed or stick to right corner but smaller */
+                text-align: center;
+                backdrop-filter: blur(15px);
+                /* Stronger blur for readability over potential content */
+                background: rgba(0, 0, 0, 0.4);
+                /* Slightly darker for legibility */
+            }
+
+            .game-container {
+                max-width: 100%;
+                border-width: 1px;
+            }
+
+            canvas {
+                height: auto;
+                /* Maintain aspect ratio handled by JS or CSS aspect-ratio if supported, 
+                  but 100% width is key */
+            }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+
+            /* Mobile Landscape Fixes */
+            .timer-bar {
+                display: none;
+                /* Hide header on very short landscape screens to save space */
+            }
+
+            .container {
+                padding-top: 20px;
+            }
+        }
+
+        /* --- MOBILE GAME CONTROLS --- */
+        .mobile-controls {
+            display: none;
+            gap: 20px;
+            margin-top: 15px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 188, 212, 0.5);
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .control-btn:active {
+            background: rgba(0, 188, 212, 0.4);
+            transform: scale(0.95);
+        }
+
+        .fire-btn {
+            border-color: #ff00ff;
+            background: rgba(255, 0, 255, 0.1);
+        }
+
+        .fire-btn:active {
+            background: rgba(255, 0, 255, 0.4);
+        }
+
+        @media (max-width: 900px) {
+            .mobile-controls {
+                display: flex;
             }
         }
     </style>
@@ -525,6 +639,15 @@
                 <span id="high-score-wrapper" style="margin-left: 20px; font-size: 0.8em; color: #fff;">High Score:
                     <span id="high-score-display">0</span></span>
                 <div id="wave-display" style="font-size: 0.8em; color: #ff00ff; margin-top:5px;">WAVE 1</div>
+            </div>
+
+            <!-- Touch Controls -->
+            <div class="mobile-controls">
+                <div class="control-btn" ontouchstart="setKey('ArrowLeft', true); event.preventDefault()"
+                    ontouchend="setKey('ArrowLeft', false); event.preventDefault()">←</div>
+                <div class="control-btn fire-btn" ontouchstart="handleMobileFire(); event.preventDefault()">🔥</div>
+                <div class="control-btn" ontouchstart="setKey('ArrowRight', true); event.preventDefault()"
+                    ontouchend="setKey('ArrowRight', false); event.preventDefault()">→</div>
             </div>
         </div>
 
@@ -845,6 +968,18 @@
             }
         });
         window.addEventListener('keyup', e => keys[e.code] = false);
+
+        // Mobile Controls Helper
+        function setKey(code, val) {
+            keys[code] = val;
+        }
+
+        function handleMobileFire() {
+            if (document.getElementById('view-game').style.display === 'block') {
+                if (!gameRunning && gameEnabled) startGameLoop();
+                else if (gameRunning) fireBullet();
+            }
+        }
 
         function initGame() {
             score = 0;
