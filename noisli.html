@@ -410,6 +410,15 @@
             /* Reserve space */
         }
 
+        .dt-weather {
+            font-size: 0.85rem;
+            color: #ccc;
+            margin-bottom: 5px;
+            font-weight: bold;
+            display: none;
+            /* Hidden until loaded */
+        }
+
         .location-btn {
             background: rgba(0, 188, 212, 0.2);
             border: 1px solid rgba(0, 188, 212, 0.5);
@@ -680,6 +689,7 @@
         <div class="dt-location" id="dt-location">
             <button class="location-btn" onclick="fetchLocation()">Enable Location</button>
         </div>
+        <div class="dt-weather" id="dt-weather"></div>
         <div class="dt-time" id="dt-time">00:00:00</div>
         <div class="dt-date" id="dt-date">Loading...</div>
     </div>
@@ -1232,6 +1242,21 @@
         setInterval(updateDateTimeWidget, 1000);
 
         // Location Fetch
+        // OPEN-METEO WMO CODE MAP
+        function getWeatherEmoji(code) {
+            const map = {
+                0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+                45: '🌫️', 48: '🌫️',
+                51: '🌧️', 53: '🌧️', 55: '🌧️',
+                61: '☔', 63: '☔', 65: '☔',
+                71: '❄️', 73: '❄️', 75: '❄️',
+                80: '🌦️', 81: '🌦️', 82: '⛈️',
+                95: '⚡', 96: '⚡', 99: '⚡'
+            };
+            return map[code] || '🌡️';
+        }
+
+        // Location & Weather Fetch
         function fetchLocation() {
             // Show loading state
             document.getElementById('dt-location').innerHTML = "Wait...";
@@ -1240,8 +1265,33 @@
                 .then(response => response.json())
                 .then(data => {
                     const city = data.city;
-                    const country = data.country; // or country_code
+                    const country = data.country;
+                    const lat = data.latitude;
+                    const lon = data.longitude;
+
+                    // 1. Update Location
                     document.getElementById('dt-location').innerText = `${city}, ${country}`;
+
+                    // 2. Fetch Weather
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+                        .then(res => res.json())
+                        .then(weatherData => {
+                            if (weatherData.current_weather) {
+                                const temp = weatherData.current_weather.temperature;
+                                const code = weatherData.current_weather.weathercode;
+                                const emoji = getWeatherEmoji(code);
+
+                                const weatherEl = document.getElementById('dt-weather');
+                                weatherEl.style.display = 'block';
+                                weatherEl.innerText = `${temp}°C ${emoji}`;
+                            }
+                        })
+                        .catch(e => {
+                            console.error("Weather fetch failed", e);
+                            const weatherEl = document.getElementById('dt-weather');
+                            weatherEl.style.display = 'block';
+                            weatherEl.innerText = "Weather Unavailable";
+                        });
                 })
                 .catch(err => {
                     console.error("Location fetch failed", err);
