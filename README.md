@@ -5,13 +5,14 @@ A minimalist Pomodoro timer with ambient nature sounds to help you focus and rel
 ## ✨ Features
 
 - **Pomodoro Timer**: Customizable work and break sessions (5-60 minutes)
-- **Ambient Soundscapes**: Mix and match forest, rain, birds, and ocean waves
+- **Ambient Soundscapes**: Mix and match forest, rain, birds, ocean waves, and brown noise
 - **Volume Control**: Individual volume sliders for each sound
 - **Auto Fade-Out**: Sounds gradually fade when timer completes
+- **Productivity Dashboard**: Real-time Date, Time, and Location display
 - **Break Game**: Unlock a Space Invaders-style game during break time! 👾
 - **Persistent Settings**: Your timer preferences are saved automatically
 - **Tab Timer Display**: See countdown in browser tab when timer is running
-- **Responsive Design**: Works on desktop and mobile browsers
+- **Responsive Design**: Optimized for Laptop, Tablet, and Mobile devices
 - **No Installation Required**: Pure HTML/CSS/JavaScript - just open and use
 
 ## 🚀 Getting Started
@@ -35,6 +36,7 @@ Noisli-Clone/
 ├── noisli.html         # Main application file
 └── sounds/            # Audio files
     ├── bird_sounds.mp3
+    ├── brown_noise.mp3
     ├── forest_sounds.mp3
     ├── rain_sounds.mp3
     └── wave_sounds.mp3
@@ -53,8 +55,8 @@ Noisli-Clone/
 When you enter **Break Mode**, the game becomes unlocked!
 
 **How to Play:**
-- **Move**: Use Arrow Keys (← →) to move your ship
-- **Shoot**: Press SPACEBAR to fire bullets
+- **Desktop**: Use Arrow Keys (← →) to move, SPACEBAR to fire
+- **Mobile**: Use on-screen touch controls (Left/Right Arrows, Fire Button)
 - **Objective**: Destroy all enemy ships before they reach you!
 
 **Game Features:**
@@ -69,6 +71,7 @@ When you enter **Break Mode**, the game becomes unlocked!
 - 🌧️ **Rain** - Soft rainfall ambience
 - 🦜 **Birds** - Morning birdsong
 - 🌊 **Ocean** - Calming waves
+- 📻 **Brown Noise** - Deep static for concentration
 
 Mix multiple sounds together to create your perfect productivity atmosphere!
 
@@ -113,7 +116,6 @@ Feel free to fork this project and submit pull requests for any improvements!
 - Additional game levels or game modes
 - More ambient sound options
 - Statistics tracking (total focus time, completed sessions)
-- Mobile-friendly game controls
 
 ---
 
