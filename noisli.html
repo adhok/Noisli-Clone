@@ -575,6 +575,86 @@
                 display: flex;
             }
         }
+
+        /* --- BREATHING EXERCISE --- */
+        .breathing-container {
+            width: 100%;
+            height: 400px;
+            display: none;
+            /* Toggled via JS */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .breath-circle-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breath-circle {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #00bcd4, #00ff88);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
+            /* Animation applied by JS class to control start/stop */
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        .breath-circle.animating {
+            animation: breatheAnimation 13s ease-in-out infinite;
+        }
+
+        @keyframes breatheAnimation {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            38% {
+                transform: scale(2.5);
+                opacity: 0.4;
+            }
+
+            /* Breathe In (5s) */
+            62% {
+                transform: scale(2.5);
+                opacity: 0.4;
+            }
+
+            /* Hold (3s) */
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            /* Breathe Out (5s) */
+        }
+
+        .breath-text {
+            position: absolute;
+            z-index: 2;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .breath-subtext {
+            margin-top: 20px;
+            color: #ccc;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 
@@ -621,6 +701,9 @@
             <button class="switch-btn active" id="btn-view-audio" onclick="setView('audio')">Soundboard</button>
             <button class="switch-btn" id="btn-view-game" onclick="setView('game')" disabled>
                 👾 Break Game <span id="game-lock-status" style="font-size:0.8em; margin-left:5px;">(Locked)</span>
+            </button>
+            <button class="switch-btn" id="btn-view-breathing" onclick="setView('breathing')" disabled>
+                🧘 Breathe
             </button>
         </div>
 
@@ -695,6 +778,15 @@
                 <div class="control-btn" ontouchstart="setKey('ArrowRight', true); event.preventDefault()"
                     ontouchend="setKey('ArrowRight', false); event.preventDefault()">→</div>
             </div>
+        </div>
+
+        <!-- Breathing Exercise View -->
+        <div class="breathing-container" id="view-breathing" style="display: none;">
+            <div class="breath-circle-container">
+                <div class="breath-circle"></div>
+                <div class="breath-text" id="breath-instruction">Ready?</div>
+            </div>
+            <div class="breath-subtext">Follow the circle...</div>
         </div>
 
         <button class="stop-all-btn" onclick="stopAllSounds()">Shutdown Audio</button>
@@ -961,7 +1053,10 @@
                 modeLabel.style.color = "#00bcd4";
                 modeBtn.textContent = "Back to Work";
                 gameEnabled = true;
-                gameBtn.disabled = false;
+
+                document.getElementById('btn-view-game').disabled = false;
+                document.getElementById('btn-view-breathing').disabled = false;
+
                 lockStatus.innerText = "(Ready)";
                 lockStatus.style.color = "#00bcd4";
             } else {
@@ -972,7 +1067,10 @@
                 modeBtn.textContent = "Break";
                 setView('audio'); // Force back to audio
                 gameEnabled = false;
-                gameBtn.disabled = true;
+
+                document.getElementById('btn-view-game').disabled = true;
+                document.getElementById('btn-view-breathing').disabled = true;
+
                 lockStatus.innerText = "(Locked)";
                 lockStatus.style.color = "#666";
             }
@@ -982,15 +1080,56 @@
         function setView(viewName) {
             document.getElementById('view-audio').style.display = viewName === 'audio' ? 'grid' : 'none';
             document.getElementById('view-game').style.display = viewName === 'game' ? 'block' : 'none';
+            document.getElementById('view-breathing').style.display = viewName === 'breathing' ? 'flex' : 'none';
 
             document.getElementById('btn-view-audio').classList.toggle('active', viewName === 'audio');
             document.getElementById('btn-view-game').classList.toggle('active', viewName === 'game');
+            document.getElementById('btn-view-breathing').classList.toggle('active', viewName === 'breathing');
 
+            // Handle Game State
             if (viewName === 'game' && gameEnabled) {
                 initGame();
             } else {
                 stopGame();
             }
+
+            // Handle Breathing State
+            if (viewName === 'breathing') {
+                startBreathing();
+            } else {
+                stopBreathing();
+            }
+        }
+
+        // --- BREATHING LOGIC ---
+        let breathInterval;
+
+        function startBreathing() {
+            const circle = document.querySelector('.breath-circle');
+            const text = document.getElementById('breath-instruction');
+
+            circle.classList.add('animating');
+            text.innerText = "Breathe In";
+
+            // Sync text with CSS animation (13s total: 5s In, 3s Hold, 5s Out)
+
+            let phase = 0;
+            // Immediate start
+            setTimeout(() => text.innerText = "Hold", 5000);
+            setTimeout(() => text.innerText = "Breathe Out", 8000);
+
+            breathInterval = setInterval(() => {
+                text.innerText = "Breathe In";
+                setTimeout(() => text.innerText = "Hold", 5000);
+                setTimeout(() => text.innerText = "Breathe Out", 8000);
+            }, 13000);
+        }
+
+        function stopBreathing() {
+            const circle = document.querySelector('.breath-circle');
+            circle.classList.remove('animating');
+            clearInterval(breathInterval);
+            document.getElementById('breath-instruction').innerText = "Ready?";
         }
 
         // --- 4. GAME ENGINE ---

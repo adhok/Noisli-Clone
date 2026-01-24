@@ -9,6 +9,7 @@ A minimalist Pomodoro timer with ambient nature sounds to help you focus and rel
 - **Volume Control**: Individual volume sliders for each sound
 - **Auto Fade-Out**: Sounds gradually fade when timer completes
 - **Productivity Dashboard**: Real-time Date, Time, and Location display
+- **Breathing Exercise**: Guided visualization for stress relief (5s-3s-5s cycle)
 - **Break Game**: Unlock a Space Invaders-style game during break time! 👾
 - **Persistent Settings**: Your timer preferences are saved automatically
 - **Tab Timer Display**: See countdown in browser tab when timer is running
@@ -64,6 +65,14 @@ When you enter **Break Mode**, the game becomes unlocked!
 - Watch out for **diving enemies** (purple) that chase you!
 - Difficulty increases as your score goes up
 - Game automatically locks when you return to work mode
+
+### Breathing Mode 🧘
+Unlock the **Breathe** tab during breaks for a guided relaxation session.
+- **Visual Guide**: Follow the circle as it expands and contracts.
+- **Cycle**: 
+  - **Inhale**: 5 Seconds ↗️
+  - **Hold**: 3 Seconds ⏸️
+  - **Exhale**: 5 Seconds ↘️
 
 ## 🎨 Sound Profiles
 
