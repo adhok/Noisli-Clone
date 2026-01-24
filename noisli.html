@@ -963,7 +963,8 @@
             const s = timeLeft % 60;
             const timeString = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
             timeDisplay.textContent = timeString;
-            document.title = isRunning ? `(${timeString}) Eco-Focus` : "Eco-Focus | Bio-Dome";
+            const mode = isBreak ? "Break" : "Focus";
+            document.title = isRunning ? `(${timeString}) ${mode} | Eco-Focus` : "Eco-Focus | Bio-Dome";
         }
 
         function updateWorkDuration(value) {
