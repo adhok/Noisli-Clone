@@ -1,0 +1,757 @@
+/* RESET & BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body,
+html {
+    height: 100%;
+    font-family: 'Segoe UI', Roboto, monospace;
+    background-color: transparent;
+    color: white;
+    overflow-y: auto;
+}
+
+/* DYNAMIC BACKGROUND */
+.bg-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0f1215 url('img/japan_temple.avif') center/cover;
+    filter: brightness(0.4);
+    z-index: -1;
+}
+
+/* MAIN LAYOUT */
+/* MAIN LAYOUT */
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 130px 20px 40px;
+    gap: 30px;
+}
+
+/* --- TIMER BAR STYLES --- */
+.timer-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;
+    background: rgba(60, 65, 70, 0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    z-index: 1000;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.timer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.app-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: white;
+    letter-spacing: 1px;
+}
+
+.timer-label {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.75rem;
+    color: #888;
+    font-weight: bold;
+}
+
+.timer-display {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #00ff88;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    line-height: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.timer-controls-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.timer-settings {
+    display: flex;
+    gap: 15px;
+}
+
+.setting-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.setting-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #666;
+    margin: 0;
+}
+
+.timer-input {
+    width: 50px;
+    padding: 4px 5px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    color: #00ff88;
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.timer-input:focus {
+    outline: none;
+    border-color: rgba(0, 255, 136, 0.4);
+    background: rgba(0, 255, 136, 0.05);
+}
+
+.timer-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #ccc;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.btn-primary {
+    background: rgba(0, 255, 136, 0.15);
+    border-color: rgba(0, 255, 136, 0.4);
+    color: #00ff88;
+}
+
+.btn-primary:hover {
+    background: #00ff88;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+/* --- VIEW SWITCHER --- */
+.view-switcher {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50px;
+    padding: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 10px;
+}
+
+.switch-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    padding: 10px 25px;
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+    font-size: 0.9rem;
+}
+
+.switch-btn.active {
+    background: #00ff88;
+    color: #0f1215;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+}
+
+.switch-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* --- SOUND GRID STYLES --- */
+.sound-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 700px;
+}
+
+.sound-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    height: 180px;
+}
+
+.sound-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+#card-brown {
+    grid-column: 1 / -1;
+    width: 100%;
+    /* Was calc(50% - 10px), but in a 1fr grid, width:auto is smarter */
+    justify-self: center;
+    max-width: 340px;
+    /* Roughly half of 700px grid minus gap */
+}
+
+.sound-card.active {
+    border-color: #00ff88;
+    background: rgba(0, 255, 136, 0.08);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+}
+
+.icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+    transition: 0.3s;
+    filter: grayscale(100%);
+}
+
+.sound-card.active .icon {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: grayscale(0%);
+    text-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+}
+
+.status-text {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    color: #666;
+    font-weight: bold;
+}
+
+.sound-card.active .status-text {
+    color: #00ff88;
+}
+
+/* Volume Slider */
+.slider-wrapper {
+    width: 100%;
+    opacity: 0.3;
+    transition: 0.3s;
+    pointer-events: none;
+}
+
+.sound-card.active .slider-wrapper {
+    opacity: 1;
+    pointer-events: all;
+}
+
+input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    background: transparent;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+/* --- GAME CONTAINER --- */
+.game-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #00bcd4;
+    border-radius: 10px;
+    overflow: hidden;
+    display: none;
+    /* Hidden by default */
+    box-shadow: 0 0 30px rgba(0, 188, 212, 0.2);
+}
+
+canvas {
+    width: 100%;
+    display: block;
+}
+
+.game-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #000;
+    text-align: center;
+    width: 100%;
+}
+
+.game-score {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    color: #00bcd4;
+    font-family: monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* --- STOP ALL BUTTON --- */
+.stop-all-btn {
+    background: transparent;
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    padding: 12px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.75rem;
+    transition: 0.3s;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.stop-all-btn:hover {
+    background: #ff4444;
+    color: white;
+    box-shadow: 0 0 25px rgba(255, 68, 68, 0.4);
+}
+
+/* --- DATE TIME DISPLAY --- */
+.datetime-display {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    text-align: right;
+    font-family: 'Courier New', Courier, monospace;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.05);
+    /* Transparent like sound cards */
+    padding: 15px 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.dt-time {
+    font-size: 1.5rem;
+    color: #00ff88;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+    line-height: 1;
+}
+
+.dt-location {
+    font-size: 0.9rem;
+    color: #00bcd4;
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(0, 188, 212, 0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    min-height: 1.2em;
+    /* Reserve space */
+}
+
+
+
+.location-btn {
+    background: rgba(0, 188, 212, 0.2);
+    border: 1px solid rgba(0, 188, 212, 0.5);
+    color: #00bcd4;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    transition: 0.2s;
+}
+
+.location-btn:hover {
+    background: rgba(0, 188, 212, 0.4);
+    color: white;
+}
+
+.dt-date {
+    font-size: 0.8rem;
+    color: #ccc;
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 900px) {
+    .timer-bar {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .timer-display {
+        position: static;
+        transform: none;
+        margin: 10px 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .sound-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #card-brown {
+        max-width: 100%;
+        /* Reset max-width for mobile */
+    }
+
+    .timer-display {
+        font-size: 2.5rem;
+    }
+
+    .timer-controls-group {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .timer-settings {
+        justify-content: center;
+    }
+
+    .container {
+        padding-top: 240px;
+        /* Push content down below taller header */
+    }
+
+    .datetime-display {
+        bottom: 10px;
+        right: 10px;
+        padding: 10px;
+        left: 10px;
+        /* Make it full width capability if needed or stick to right corner but smaller */
+        text-align: center;
+        backdrop-filter: blur(15px);
+        /* Stronger blur for readability over potential content */
+        background: rgba(0, 0, 0, 0.4);
+        /* Slightly darker for legibility */
+    }
+
+    .game-container {
+        max-width: 100%;
+        border-width: 1px;
+    }
+
+    canvas {
+        height: auto;
+        /* Maintain aspect ratio handled by JS or CSS aspect-ratio if supported, 
+          but 100% width is key */
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+    /* Mobile Landscape Fixes */
+    .timer-bar {
+        display: none;
+        /* Hide header on very short landscape screens to save space */
+    }
+
+    .container {
+        padding-top: 20px;
+    }
+}
+
+/* --- MOBILE GAME CONTROLS --- */
+.mobile-controls {
+    display: none;
+    gap: 20px;
+    margin-top: 15px;
+    justify-content: center;
+    width: 100%;
+}
+
+.control-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(0, 188, 212, 0.5);
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.control-btn:active {
+    background: rgba(0, 188, 212, 0.4);
+    transform: scale(0.95);
+}
+
+.fire-btn {
+    border-color: #ff00ff;
+    background: rgba(255, 0, 255, 0.1);
+}
+
+.fire-btn:active {
+    background: rgba(255, 0, 255, 0.4);
+}
+
+@media (max-width: 900px) {
+    .mobile-controls {
+        display: flex;
+    }
+}
+
+/* --- BREATHING EXERCISE --- */
+.breathing-container {
+    width: 100%;
+    height: 400px;
+    display: none;
+    /* Toggled via JS */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.breath-circle-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.breath-circle {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #00bcd4, #00ff88);
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
+    /* Animation applied by JS class to control start/stop */
+    opacity: 0.8;
+    z-index: 1;
+}
+
+.breath-circle.animating {
+    animation: breatheAnimation 13s ease-in-out infinite;
+}
+
+@keyframes breatheAnimation {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    38% {
+        transform: scale(2.5);
+        opacity: 0.4;
+    }
+
+    /* Breathe In (5s) */
+    62% {
+        transform: scale(2.5);
+        opacity: 0.4;
+    }
+
+    /* Hold (3s) */
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    /* Breathe Out (5s) */
+}
+
+.breath-text {
+    position: absolute;
+    z-index: 2;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+.breath-subtext {
+    margin-top: 20px;
+    color: #ccc;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* --- STATISTICS CONTAINER --- */
+.stats-container {
+    width: 100%;
+    max-width: 800px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+.stats-header h2 {
+    font-size: 1.8rem;
+    color: #00ff88;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    color: #00ff88;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 8px;
+}
+
+.stats-viz {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#statsCanvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.stats-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.stats-actions button {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    transition: 0.2s;
+    font-weight: 600;
+}
+
+.stats-actions button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+@media (max-width: 600px) {
+    .stats-viz {
+        padding: 15px;
+    }
+
+    #statsCanvas {
+        width: 100%;
+        height: auto;
+    }
+
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
