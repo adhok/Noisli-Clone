@@ -27,15 +27,17 @@ A minimalist Pomodoro timer with ambient nature sounds to help you focus and rel
 ```bash
    cd Noisli-Clone
 ```
-3. Open `noisli.html` in your web browser
+3. Open `index.html` in your web browser
 
 That's it! No build process or dependencies needed.
 
 ### File Structure
 ```
 Noisli-Clone/
-├── noisli.html         # Main application file
-└── sounds/            # Audio files
+├── index.html          # Main HTML structure
+├── style.css           # Styling and layout
+├── script.js           # Application logic
+└── sounds/             # Audio files
     ├── bird_sounds.mp3
     ├── brown_noise.mp3
     ├── forest_sounds.mp3
@@ -87,8 +89,8 @@ Mix multiple sounds together to create your perfect productivity atmosphere!
 ## 🛠️ Customization
 
 You can easily customize:
-- Background image (line 18 in `noisli.html`)
-- Color scheme (CSS variables in the `<style>` section)
+- Background image (line 18 in `style.css`)
+- Color scheme (CSS variables in `style.css`)
 - Sound files (replace MP3s in the `sounds/` folder)
 - Timer constraints (change min/max values in the input fields)
 - Game difficulty (adjust `baseSpeed` and enemy spawn rates in the JavaScript)
