@@ -188,6 +188,19 @@
         <div class="dt-date" id="dt-date">Loading...</div>
     </div>
 
+    <!-- Sticky Notes Logic -->
+    <div id="sticky-notes-container"></div>
+
+    <div class="note-colors-menu" id="note-colors-menu">
+        <div class="color-option" style="background:#ffeb3b" onclick="addNote('#ffeb3b')"></div>
+        <div class="color-option" style="background:#a7ffeb" onclick="addNote('#a7ffeb')"></div>
+        <div class="color-option" style="background:#ccff90" onclick="addNote('#ccff90')"></div>
+        <div class="color-option" style="background:#f48fb1" onclick="addNote('#f48fb1')"></div>
+        <div class="color-option" style="background:#80d8ff" onclick="addNote('#80d8ff')"></div>
+    </div>
+
+    <button class="add-note-fab" onclick="toggleColorMenu()">+ NOTE</button>
+
     <script src="script.js"></script>
 </body>
 

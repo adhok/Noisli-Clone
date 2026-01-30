@@ -755,3 +755,144 @@ canvas {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+/* --- STICKY NOTES --- */
+.add-note-fab {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #ffeb3b;
+    color: #333;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 24px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 2000;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+    letter-spacing: 1px;
+}
+
+.add-note-fab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    background: #fff176;
+}
+
+.sticky-note {
+    position: absolute;
+    width: 200px;
+    min-height: 150px;
+    background: #ffeb3b;
+    border-radius: 2px; /* Post-it look */
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    z-index: 1500;
+    transition: box-shadow 0.2s;
+}
+
+.sticky-note:hover {
+    box-shadow: 8px 8px 25px rgba(0,0,0,0.3);
+    z-index: 1510; /* Bring to front on hover mostly */
+}
+
+.sticky-note.pop-in {
+    animation: popIn 0.3s ease-out;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.note-handle {
+    height: 25px;
+    background: rgba(0,0,0,0.1);
+    cursor: grab;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 5px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+.note-handle:active {
+    cursor: grabbing;
+}
+
+.note-delete {
+    cursor: pointer;
+    font-weight: bold;
+    color: rgba(0,0,0,0.5);
+    padding: 0 5px;
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.note-delete:hover {
+    color: #d32f2f;
+}
+
+.note-content {
+    flex-grow: 1;
+    padding: 10px;
+    color: #333;
+    font-family: 'Comic Sans MS', 'chalkboard SE', sans-serif; /* Playful font for notes */
+    font-size: 0.95rem;
+    outline: none;
+    resize: none;
+    overflow-y: auto;
+    background: transparent;
+    border: none;
+    line-height: 1.4;
+}
+
+/* Scrollbar for note content */
+.note-content::-webkit-scrollbar {
+    width: 6px;
+}
+.note-content::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+}
+
+/* --- COLOR MENU --- */
+.note-colors-menu {
+    position: fixed;
+    bottom: 80px; /* Above the FAB */
+    left: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2000;
+    pointer-events: none; /* Hidden state */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.note-colors-menu.active {
+    pointer-events: all;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.color-option {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.5);
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+}
+
+.color-option:hover {
+    transform: scale(1.2);
+    border-color: #fff;
+}

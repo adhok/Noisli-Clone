@@ -818,3 +818,169 @@ function resetStats() {
         alert('Session history cleared!');
     }
 }
+
+// --- 7. STICKY NOTES ENGINE ---
+
+let stickyNotes = [];
+
+// Load Notes
+function initStickyNotes() {
+    const savedNotes = localStorage.getItem('stickyNotes');
+    if (savedNotes) {
+        stickyNotes = JSON.parse(savedNotes);
+        stickyNotes.forEach(renderNote);
+    }
+}
+
+function toggleColorMenu() {
+    const menu = document.getElementById('note-colors-menu');
+    menu.classList.toggle('active');
+}
+
+function addNote(color = '#ffeb3b') {
+    const id = Date.now();
+    const noteData = {
+        id: id,
+        x: 100 + (stickyNotes.length * 20),
+        y: 100 + (stickyNotes.length * 20),
+        content: '',
+        color: color
+    };
+
+    stickyNotes.push(noteData);
+    saveNotes();
+    renderNote(noteData);
+
+    // Close menu after selection
+    document.getElementById('note-colors-menu').classList.remove('active');
+}
+
+function renderNote(noteData) {
+    const container = document.getElementById('sticky-notes-container');
+
+    const noteEl = document.createElement('div');
+    noteEl.className = 'sticky-note pop-in';
+    noteEl.id = 'note-' + noteData.id;
+    noteEl.style.left = noteData.x + 'px';
+    noteEl.style.top = noteData.y + 'px';
+    noteEl.style.backgroundColor = noteData.color;
+
+    // Remove animation class after it plays so it doesn't replay on move
+    noteEl.addEventListener('animationend', () => {
+        noteEl.classList.remove('pop-in');
+    });
+
+    // Handle (Drag Area)
+    const handle = document.createElement('div');
+    handle.className = 'note-handle';
+
+    const deleteBtn = document.createElement('span');
+    deleteBtn.className = 'note-delete';
+    deleteBtn.innerHTML = '&times;';
+
+    // Use mousedown to prevent drag initiation and stop propagation
+    deleteBtn.addEventListener('mousedown', (e) => {
+        e.stopPropagation(); // Stop drag from starting
+        deleteNote(noteData.id);
+    });
+
+    handle.appendChild(deleteBtn);
+
+    // Content (Editable)
+    const content = document.createElement('div');
+    content.className = 'note-content';
+    content.contentEditable = true;
+    content.innerText = noteData.content;
+    content.oninput = () => updateNoteContent(noteData.id, content.innerText);
+
+    noteEl.appendChild(handle);
+    noteEl.appendChild(content);
+    container.appendChild(noteEl);
+
+    // Drag Logic
+    makeDraggable(noteEl, handle, noteData.id);
+}
+
+function updateNoteContent(id, text) {
+    const note = stickyNotes.find(n => n.id === id);
+    if (note) {
+        note.content = text;
+        saveNotes();
+    }
+}
+
+function deleteNote(id) {
+    if (confirm('Delete this note?')) {
+        stickyNotes = stickyNotes.filter(n => n.id !== id);
+        saveNotes();
+        const el = document.getElementById('note-' + id);
+        if (el) el.remove();
+    }
+}
+
+function saveNotes() {
+    localStorage.setItem('stickyNotes', JSON.stringify(stickyNotes));
+}
+
+// Drag & Drop Handling
+function makeDraggable(element, handle, id) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    handle.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Get mouse cursor position at startup
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+
+        // Z-Index Management (Bring to top)
+        bringToFront(element);
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // Calculate cursor movement
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+
+        // Set new position
+        let newTop = (element.offsetTop - pos2);
+        let newLeft = (element.offsetLeft - pos1);
+
+        element.style.top = newTop + "px";
+        element.style.left = newLeft + "px";
+    }
+
+    function closeDragElement() {
+        // Stop moving when mouse released
+        document.onmouseup = null;
+        document.onmousemove = null;
+
+        // Save new position
+        const note = stickyNotes.find(n => n.id === id);
+        if (note) {
+            note.x = element.offsetLeft;
+            note.y = element.offsetTop;
+            saveNotes();
+        }
+    }
+}
+
+function bringToFront(el) {
+    // Simple z-index bump, or could re-append to container
+    // For now, let's just make sure it's higher than others if we tracked z-indices
+    // But re-appending to parent is the DOM way to 'bring to front' visually without z-index wars
+    const container = document.getElementById('sticky-notes-container');
+    container.appendChild(el);
+}
+
+// Init on load
+window.addEventListener('load', initStickyNotes);
+
