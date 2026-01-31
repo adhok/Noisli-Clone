@@ -706,6 +706,18 @@ function renderHourlyChart() {
     const ctx = canvas.getContext('2d');
     const hourCounts = calculateHourlyDistribution();
 
+    // Get dynamic colors from CSS
+    const styles = getComputedStyle(document.body);
+    const accentColor = styles.getPropertyValue('--accent-color').trim();
+    // Use a fixed start color or derive? Let's keep cyan as the low-intensity base if logical, 
+    // or just use accentColor for everything.
+    // Original was Cyan -> Green. 
+    // Let's use accentColor as the "Max" intensity. 
+    // And use a dimmed version or fixed Cyan for "Min". 
+    // Since DayMode is Cyan, Min=Cyan Max=Cyan is flat. 
+    // Let's enable a slight variation.
+    const baseColor = styles.getPropertyValue('--text-dim').trim() || '#666';
+
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -730,7 +742,15 @@ function renderHourlyChart() {
 
         // Color gradient based on intensity
         const intensity = count / maxCount;
-        const color = interpolateColor('#00bcd4', '#00ff88', intensity);
+        // Interpolate between a subtle base and the bright accent
+        // Note: interpolateColor needs hex. Ensure vars are hex.
+        // If vars are not hex (e.g. name), this might break. 
+        // For safety, let's just use the accentColor direct strength if complex.
+        // But let's try to trust the vars are Hex for now as established in CSS.
+        let color = accentColor;
+        if (accentColor.startsWith('#') && baseColor.startsWith('#')) {
+            color = interpolateColor(baseColor, accentColor, intensity);
+        }
 
         // Draw bar
         ctx.strokeStyle = color;
@@ -747,7 +767,7 @@ function renderHourlyChart() {
             const labelX = centerX + Math.cos(angle) * labelRadius;
             const labelY = centerY + Math.sin(angle) * labelRadius;
 
-            ctx.fillStyle = '#ccc';
+            ctx.fillStyle = styles.getPropertyValue('--text-secondary').trim();
             ctx.font = '14px Courier New';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -756,18 +776,20 @@ function renderHourlyChart() {
     }
 
     // Draw center circle with title
-    ctx.fillStyle = 'rgba(0, 255, 136, 0.1)';
+    ctx.fillStyle = accentColor;
+    ctx.globalAlpha = 0.1;
     ctx.beginPath();
     ctx.arc(centerX, centerY, innerRadius - 10, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.globalAlpha = 1.0;
 
-    ctx.fillStyle = '#00ff88';
+    ctx.fillStyle = accentColor;
     ctx.font = 'bold 20px Courier New';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText('24 Hour', centerX, centerY - 10);
 
-    ctx.fillStyle = '#888';
+    ctx.fillStyle = styles.getPropertyValue('--text-dim').trim();
     ctx.font = '14px Segoe UI';
     ctx.fillText('Clock', centerX, centerY + 15);
 }

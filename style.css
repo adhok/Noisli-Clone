@@ -195,6 +195,14 @@ html {
     color: var(--text-primary);
 }
 
+.btn:active {
+    background: var(--accent-glow);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    transform: scale(0.95);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
 .btn-primary {
     background: var(--accent-glow);
     border-color: var(--accent-color);
@@ -230,9 +238,9 @@ html {
 }
 
 .switch-btn.active {
-    background: #00ff88;
+    background: var(--accent-color);
     color: #0f1215;
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+    box-shadow: 0 0 15px var(--accent-glow);
 }
 
 .switch-btn:disabled {
@@ -629,9 +637,9 @@ canvas {
 .breath-circle {
     width: 100px;
     height: 100px;
-    background: linear-gradient(135deg, #00bcd4, #00ff88);
+    background: linear-gradient(135deg, #00bcd4, var(--accent-color));
     border-radius: 50%;
-    box-shadow: 0 0 40px rgba(0, 255, 136, 0.4);
+    box-shadow: 0 0 40px var(--accent-glow);
     /* Animation applied by JS class to control start/stop */
     opacity: 0.8;
     z-index: 1;
