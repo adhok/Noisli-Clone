@@ -14,6 +14,7 @@ A minimalist Pomodoro timer with ambient nature sounds to help you focus and rel
 - **Persistent Settings**: Your timer preferences are saved automatically
 - **Tab Timer Display**: See countdown in browser tab when timer is running
 - **Responsive Design**: Optimized for Laptop, Tablet, and Mobile devices
+- **Sticky Notes**: Create colorful, draggable reminders directly on your workspace 📝
 - **No Installation Required**: Pure HTML/CSS/JavaScript - just open and use
 
 ## 🚀 Getting Started
@@ -75,6 +76,14 @@ Unlock the **Breathe** tab during breaks for a guided relaxation session.
   - **Inhale**: 5 Seconds ↗️
   - **Hold**: 3 Seconds ⏸️
   - **Exhale**: 5 Seconds ↘️
+
+### Sticky Notes 📝
+Keep track of tasks without leaving your flow.
+1. **Create Note**: Click the **+ NOTE** button and select a color (Yellow, Green, Lime, Pink, Blue).
+2. **Edit**: Click anywhere on the note to type your tasks.
+3. **Move**: Drag the note using the top handle to position it anywhere.
+4. **Delete**: Click the **X** in the corner to remove a note.
+*Notes are automatically saved to your browser!*
 
 ## 🎨 Sound Profiles
 
