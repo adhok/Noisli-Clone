@@ -487,6 +487,8 @@ canvas {
 /* --- RESPONSIVE DESIGN --- */
 @media (max-width: 900px) {
     .timer-bar {
+        display: flex;
+        /* Switch from grid to flex for vertical stacking */
         flex-direction: column;
         height: auto;
         padding: 15px;
@@ -706,7 +708,7 @@ canvas {
 
 .stats-header h2 {
     font-size: 1.8rem;
-    color: #00ff88;
+    color: var(--accent-color);
     text-align: center;
     margin-bottom: 20px;
     text-transform: uppercase;
@@ -733,10 +735,10 @@ canvas {
 
 .stat-value {
     font-size: 2rem;
-    color: #00ff88;
+    color: var(--accent-color);
     font-weight: bold;
     font-family: 'Courier New', monospace;
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+    text-shadow: 0 0 10px var(--accent-glow);
 }
 
 .stat-label {

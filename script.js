@@ -706,17 +706,10 @@ function renderHourlyChart() {
     const ctx = canvas.getContext('2d');
     const hourCounts = calculateHourlyDistribution();
 
-    // Get dynamic colors from CSS
-    const styles = getComputedStyle(document.body);
-    const accentColor = styles.getPropertyValue('--accent-color').trim();
-    // Use a fixed start color or derive? Let's keep cyan as the low-intensity base if logical, 
-    // or just use accentColor for everything.
-    // Original was Cyan -> Green. 
-    // Let's use accentColor as the "Max" intensity. 
-    // And use a dimmed version or fixed Cyan for "Min". 
-    // Since DayMode is Cyan, Min=Cyan Max=Cyan is flat. 
-    // Let's enable a slight variation.
-    const baseColor = styles.getPropertyValue('--text-dim').trim() || '#666';
+    // Determine colors using explicit JS check to avoid CSS variable delay/race conditions
+    const isLight = document.body.getAttribute('data-theme') === 'light';
+    const accentColor = isLight ? '#00bcd4' : '#00ff88'; // Cyan vs Green
+    const baseColor = isLight ? '#666666' : '#222222'; // Dark Grey vs Near Black
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -742,15 +735,7 @@ function renderHourlyChart() {
 
         // Color gradient based on intensity
         const intensity = count / maxCount;
-        // Interpolate between a subtle base and the bright accent
-        // Note: interpolateColor needs hex. Ensure vars are hex.
-        // If vars are not hex (e.g. name), this might break. 
-        // For safety, let's just use the accentColor direct strength if complex.
-        // But let's try to trust the vars are Hex for now as established in CSS.
-        let color = accentColor;
-        if (accentColor.startsWith('#') && baseColor.startsWith('#')) {
-            color = interpolateColor(baseColor, accentColor, intensity);
-        }
+        const color = interpolateColor(baseColor, accentColor, intensity);
 
         // Draw bar
         ctx.strokeStyle = color;
@@ -767,7 +752,7 @@ function renderHourlyChart() {
             const labelX = centerX + Math.cos(angle) * labelRadius;
             const labelY = centerY + Math.sin(angle) * labelRadius;
 
-            ctx.fillStyle = styles.getPropertyValue('--text-secondary').trim();
+            ctx.fillStyle = isLight ? '#4a4a5e' : '#888888';
             ctx.font = '14px Courier New';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -789,7 +774,7 @@ function renderHourlyChart() {
     ctx.textBaseline = 'middle';
     ctx.fillText('24 Hour', centerX, centerY - 10);
 
-    ctx.fillStyle = styles.getPropertyValue('--text-dim').trim();
+    ctx.fillStyle = isLight ? '#6a6a7e' : '#666666';
     ctx.font = '14px Segoe UI';
     ctx.fillText('Clock', centerX, centerY + 15);
 }
@@ -1032,7 +1017,11 @@ function toggleTheme() {
 }
 
 function setTheme(theme) {
-    document.body.setAttribute('data-theme', theme);
+    if (theme === 'light') {
+        document.body.setAttribute('data-theme', 'light');
+    } else {
+        document.body.removeAttribute('data-theme');
+    }
     localStorage.setItem('theme', theme);
 
     // Sync checkbox state
@@ -1040,6 +1029,15 @@ function setTheme(theme) {
     if (checkbox) {
         checkbox.checked = (theme === 'light');
     }
+
+    // Force redraw of canvas if visible to pick up new variable colors
+    // Delay slightly to ensure CSS variables have updated in the DOM
+    setTimeout(() => {
+        const statsView = document.getElementById('view-stats');
+        if (statsView && statsView.style.display !== 'none') {
+            renderHourlyChart();
+        }
+    }, 50);
 }
 
 // Init theme on load
