@@ -984,3 +984,45 @@ function bringToFront(el) {
 // Init on load
 window.addEventListener('load', initStickyNotes);
 
+
+// --- 8. THEME TOGGLE ---
+
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const themeBtn = document.getElementById('theme-btn');
+    
+    if (savedTheme) {
+        setTheme(savedTheme);
+    } else {
+        // Auto-detect based on time (6 AM - 6 PM is Day)
+        const hour = new Date().getHours();
+        if (hour >= 6 && hour < 18) {
+            setTheme('light');
+        } else {
+            setTheme('dark');
+        }
+    }
+}
+
+function toggleTheme() {
+    const currentTheme = document.body.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+}
+
+function setTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    
+    const themeBtn = document.getElementById('theme-btn');
+    if (theme === 'light') {
+        themeBtn.innerText = '☀️';
+        themeBtn.title = "Switch to Night Mode";
+    } else {
+        themeBtn.innerText = '🌙';
+        themeBtn.title = "Switch to Day Mode";
+    }
+}
+
+// Init theme on load
+window.addEventListener('load', initTheme);
