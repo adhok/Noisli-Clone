@@ -2,6 +2,8 @@
 
 A minimalist Pomodoro timer with ambient nature sounds to help you focus and relax. Inspired by Noisli, this web app combines productivity tracking with customizable soundscapes and a fun break-time reward game!
 
+### 🚀 [Live Demo](https://zhongdian.netlify.app/)
+
 ## ✨ Features
 
 - **Pomodoro Timer**: Customizable work and break sessions (5-60 minutes)
