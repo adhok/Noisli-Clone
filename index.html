@@ -13,12 +13,20 @@
     <div class="bg-image"></div>
 
     <nav class="timer-bar">
-        <div class="timer-info">
-            <div class="app-title">ECO-FOCUS | BIO-DOME</div>
-            <div class="timer-label" id="timer-mode">System Focus</div>
-            <div class="session-count" id="session-count-display"
-                style="font-size: 0.7rem; color: #00bcd4; margin-top: 5px; font-weight: bold; letter-spacing: 1px;">
-                TOTAL SESSIONS: 0</div>
+        <div class="left-nav-group">
+            <!-- Theme Toggle Slider -->
+            <label class="switch">
+                <input type="checkbox" id="theme-toggle-input" onchange="toggleTheme()">
+                <span class="slider"></span>
+            </label>
+
+            <div class="timer-info">
+                <div class="app-title">ECO-FOCUS | BIO-DOME</div>
+                <div class="timer-label" id="timer-mode">System Focus</div>
+                <div class="session-count" id="session-count-display"
+                    style="font-size: 0.7rem; color: #00bcd4; margin-top: 5px; font-weight: bold; letter-spacing: 1px;">
+                    TOTAL SESSIONS: 0</div>
+            </div>
         </div>
 
         <div class="timer-display" id="time-display">25:00</div>
@@ -42,9 +50,6 @@
                 <button class="btn" onclick="resetTimer()">Reset</button>
                 <button class="btn" id="mode-btn" onclick="switchMode()">Break</button>
             </div>
-
-            <button class="theme-toggle-btn" id="theme-btn" onclick="toggleTheme()"
-                title="Toggle Day/Night Mode">🌙</button>
         </div>
     </nav>
 

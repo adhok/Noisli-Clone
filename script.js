@@ -989,8 +989,7 @@ window.addEventListener('load', initStickyNotes);
 
 function initTheme() {
     const savedTheme = localStorage.getItem('theme');
-    const themeBtn = document.getElementById('theme-btn');
-    
+
     if (savedTheme) {
         setTheme(savedTheme);
     } else {
@@ -1005,22 +1004,19 @@ function initTheme() {
 }
 
 function toggleTheme() {
-    const currentTheme = document.body.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    const checkbox = document.getElementById('theme-toggle-input');
+    const newTheme = checkbox.checked ? 'light' : 'dark';
     setTheme(newTheme);
 }
 
 function setTheme(theme) {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
-    
-    const themeBtn = document.getElementById('theme-btn');
-    if (theme === 'light') {
-        themeBtn.innerText = '☀️';
-        themeBtn.title = "Switch to Night Mode";
-    } else {
-        themeBtn.innerText = '🌙';
-        themeBtn.title = "Switch to Day Mode";
+
+    // Sync checkbox state
+    const checkbox = document.getElementById('theme-toggle-input');
+    if (checkbox) {
+        checkbox.checked = (theme === 'light');
     }
 }
 
